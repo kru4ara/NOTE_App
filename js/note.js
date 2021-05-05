@@ -54,6 +54,13 @@ class Note {
 
     if (target.getAttribute('type') == 'submit') {
       const textareaElement = target.previousElementSibling;
+      const cardElement = target.closest('.card')
+
+      const { id } = cardElement.dataset
+      const index = this.#getIndexSelectedNote(id)
+      this.data[index].content = textareaElement.value
+
+      this.render();
       console.log(textareaElement)
     };
   }
@@ -64,7 +71,7 @@ class Note {
       content: 'Double click to edit',
       bg: this.inputColorElement.value
     }
-    
+
     this.data.push(noteData);
   }
 
