@@ -1,9 +1,12 @@
+import { DnD } from './dnd'
+
 class Note {
 
   data = [];
   editNoteClass = 'card_edit';
+  DnD = DnD;
 
-  constructor(wrapSelector = null, buttonSelector = null) {
+  constructor(wrapSelector = null, buttonSelector = null, inputSelector = null) {
     this.wrapElement = document.querySelector(wrapSelector) || document.body;
     this.buttonElement = document.querySelector(buttonSelector);
     this.inputColorElement = document.querySelector('#colorCard');
@@ -20,26 +23,26 @@ class Note {
       return;
     }
 
-    this.#eventListeners()
+    this.#eventListeners();
   };
 
   #eventListeners() {
     this.buttonElement.addEventListener('click', this.#handleButtonAddNote.bind(this)); // Добавление заметки
     document.addEventListener('dblclick', this.#handleDoubleClick.bind(this)); // Двойной клик для редактирования заметки
-    document.addEventListener('click', this.#handleClickButtonSubmit.bind(this)) // Редактирование заметки
+    document.addEventListener('click', this.#handleClickButtonSubmit.bind(this)); // Редактирование заметки
   };
 
   #handleButtonAddNote() {
-    this.#addNote()
-    this.render()
+    this.#addNote();
+    this.render();
   };
 
   #handleDoubleClick(event) {
-    const { target } = event
-    const cardElement = target.closest('.card')
+    const { target } = event;
+    const cardElement = target.closest('.card');
 
     if (cardElement) {
-      cardElement.classList.add(this.editNoteClass)
+      cardElement.classList.add(this.editNoteClass);
     }
   }
 
@@ -49,14 +52,13 @@ class Note {
 
     if (target.getAttribute('type') == 'submit') {
       const textareaElement = target.previousElementSibling;
-      const cardElement = target.closest('.card')
+      const cardElement = target.closest('.card');
 
-      const { id } = cardElement.dataset
-      const index = this.#getIndexSelectedNote(id)
-      this.data[index].content = textareaElement.value
+      const { id } = cardElement.dataset;
+      const index = this.#getIndexSelectedNote(id);
+      this.data[index].content = textareaElement.value;
 
       this.render();
-      console.log(textareaElement)
     };
   }
 
@@ -64,14 +66,29 @@ class Note {
     const noteData = {
       id: new Date().getTime(),
       content: 'Double click to edit',
-      bg: this.inputColorElement.value
+      bg: this.inputColorElement.value,
+      position: { left: 'auto', top: 'auto' }
     }
 
     this.data.push(noteData);
   }
 
-  #templateNote(noteData) {
-    const { id, content, bg } = noteData;
+  #buildNoteElement(noteData) {
+    const { id, content, position, bg } = noteData;
+    const dndWrapElement = document.createElement('div');
+
+    this.#setPosition(position, dndWrapElement);
+    dndWrapElement.classList.add('dnd');
+    new this.DnD(dndWrapElement);
+
+    dndWrapElement.addEventListener('dnd:end', (event) => {
+      const { position } = event.detail;
+      const index = this.#getIndexSelectedNote(id);
+
+      this.data[index].position = position;
+      this.#setPosition(position, dndWrapElement);
+    })
+    
 
     const template = `
           <div data-id="${id}" class="card mt-2" style="background-color: ${bg}">
@@ -82,9 +99,11 @@ class Note {
             </form>
             <button class="btn btn-sm btn-primary card__close">Close</button>
           </div>
-        `
+        `;
+        
+    dndWrapElement.innerHTML = template;
 
-    return template;
+    return dndWrapElement;
   };
 
   #getIndexSelectedNote(id) {
@@ -99,19 +118,18 @@ class Note {
     return index;
   }
 
-  #editNote(index, content) {
-    this.data[index].content = content;
+  #setPosition({ left, top }, element) {
+    element.style.left = left;
+    element.style.top = top;
   }
-
   render() {
-    let templateNotes = '';
+    this.wrapElement.innerHTML = '';
 
     this.data.forEach((item) => {
-      templateNotes += this.#templateNote(item);
-    });
-
-    this.wrapElement.innerHTML = templateNotes;
-  };
+      const noteElement = this.#buildNoteElement(item);
+      this.wrapElement.append(noteElement);
+    })
+  }
 }
 
 export { Note };

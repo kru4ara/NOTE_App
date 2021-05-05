@@ -14,6 +14,8 @@ $name: "card";
   width: 200px;
   height: 300px;
   padding: 8px;
+  box-shadow: -10px 0px 13px -7px #000000, 10px 0px 13px -7px #000000,
+    5px 5px 15px 5px #00000000;
 
   &_edit {
     .#{$name}__form {
@@ -31,4 +33,12 @@ $name: "card";
   &__close {
     flex: 0 0 auto;
   }
+}
+#newNote,
+#colorCard {
+  box-shadow: inset -1px 3px 8px 5px #1f87ff, 2px 5px 16px 0px #0b325e,
+    5px 5px 15px 5px rgba(0, 0, 0, 0);
+}
+.dnd {
+  position: absolute;
 }
