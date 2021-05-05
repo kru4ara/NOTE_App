@@ -25,8 +25,8 @@ class Note {
 
   #eventListeners() {
     this.buttonElement.addEventListener('click', this.#handleButtonAddNote.bind(this)); // Добавление заметки
-    document.addEventListener('dblclick', this.#handleDoubleClick.bind(this)); // редактирование заметки
-    document.addEventListener('click', this.#handleClickButtonSubmit.bind(this))
+    document.addEventListener('dblclick', this.#handleDoubleClick.bind(this)); // Двойной клик для редактирования заметки
+    document.addEventListener('click', this.#handleClickButtonSubmit.bind(this)) // Редактирование заметки
   };
 
   #handleButtonAddNote() {
@@ -40,11 +40,6 @@ class Note {
 
     if (cardElement) {
       cardElement.classList.add(this.editNoteClass)
-      // const { id } = cardElement.dataset;
-      // const index = this.#getIndexSelectedNote(id);
-
-      // console.log(index)
-      // console.log(id)
     }
   }
 
