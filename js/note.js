@@ -26,6 +26,7 @@ class Note {
   #eventListeners() {
     this.buttonElement.addEventListener('click', this.#handleButtonAddNote.bind(this)); // Добавление заметки
     document.addEventListener('dblclick', this.#handleDoubleClick.bind(this)); // редактирование заметки
+    document.addEventListener('click', this.#handleClickButtonSubmit.bind(this))
   };
 
   #handleButtonAddNote() {
@@ -45,16 +46,25 @@ class Note {
       // console.log(index)
       // console.log(id)
     }
+  }
 
+  #handleClickButtonSubmit(event) {
+    event.preventDefault();
+    const { target } = event;
+
+    if (target.getAttribute('type') == 'submit') {
+      const textareaElement = target.previousElementSibling;
+      console.log(textareaElement)
+    };
   }
 
   #addNote() {
     const noteData = {
       id: new Date().getTime(),
-      content: 'text',
+      content: 'Double click to edit',
       bg: this.inputColorElement.value
     }
-    console.log(noteData)
+    
     this.data.push(noteData);
   }
 
@@ -65,8 +75,8 @@ class Note {
           <div data-id="${id}" class="card mt-2" style="background-color: ${bg}">
             <div class="card__content">${content}</div>
             <form class="card__form mt-1">
-              <textarea class="w-170 me-4" rows="7" value="${content}"></textarea>
-              <button id="submit" type="button" class="btn btn-sm btn-success">Save</button>
+              <textarea class="w-170 me-4" rows="7">${content}</textarea>
+              <button type="submit" class="btn btn-sm btn-success">Save</button>
             </form>
             <button class="btn btn-sm btn-primary card__close">Close</button>
           </div>
