@@ -17,6 +17,7 @@ class DnD {
     };
 
     this.handleMousemove = this._handleMousemove.bind(this);
+    
     this._init();
   }
 

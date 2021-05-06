@@ -1,19 +1,23 @@
+$padding: 8px;
+$name: "card";
+
 body {
-  padding: 16px;
-  background-color: #b9b9b9;
+  padding: $padding * 2;
+  background-image: url(https://w-dog.ru/wallpapers/3/23/472772684799999.jpg);
 }
 
 h1 {
-  color: #4d4d4d;
+  font-size: 50px;
+  color: #141414;
   text-align: center;
 }
-
-$name: "card";
 
 .#{$name} {
   width: 200px;
   height: 300px;
-  padding: 8px;
+  padding: $padding;
+  opacity: 0.9;
+  color: #ffffff;
   box-shadow: -10px 0px 13px -7px #000000, 10px 0px 13px -7px #000000,
     5px 5px 15px 5px #00000000;
 
@@ -35,7 +39,7 @@ $name: "card";
   }
 }
 #newNote,
-#colorCard {
+#colorWell {
   box-shadow: inset -1px 3px 8px 5px #1f87ff, 2px 5px 16px 0px #0b325e,
     5px 5px 15px 5px rgba(0, 0, 0, 0);
 }

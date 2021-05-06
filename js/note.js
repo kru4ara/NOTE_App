@@ -5,11 +5,12 @@ class Note {
   data = [];
   editNoteClass = 'card_edit';
   DnD = DnD;
+  bg = '#0d6efd';
 
-  constructor(wrapSelector = null, buttonSelector = null, inputSelector = null) {
+  constructor(wrapSelector = null, buttonSelector = null, inputColorSelector = null) {
     this.wrapElement = document.querySelector(wrapSelector) || document.body;
     this.buttonElement = document.querySelector(buttonSelector);
-    this.inputColorElement = document.querySelector('#colorCard');
+    this.inputColorElement = document.querySelector(inputColorSelector);
 
     this.#init();
 
@@ -30,12 +31,20 @@ class Note {
     this.buttonElement.addEventListener('click', this.#handleButtonAddNote.bind(this)); // Добавление заметки
     document.addEventListener('dblclick', this.#handleDoubleClick.bind(this)); // Двойной клик для редактирования заметки
     document.addEventListener('click', this.#handleClickButtonSubmit.bind(this)); // Редактирование заметки
+    this.inputColorElement.addEventListener('change', this.#handleChangeColor.bind(this)); // Изменение цвета заметки
   };
+
 
   #handleButtonAddNote() {
     this.#addNote();
     this.render();
   };
+
+  #handleChangeColor({ target }) {
+    const { value } = target
+
+    this.bg = value
+  }
 
   #handleDoubleClick(event) {
     const { target } = event;
@@ -66,7 +75,7 @@ class Note {
     const noteData = {
       id: new Date().getTime(),
       content: 'Double click to edit',
-      bg: this.inputColorElement.value,
+      bg: this.bg,
       position: { left: 'auto', top: 'auto' }
     }
 
@@ -88,7 +97,8 @@ class Note {
       this.data[index].position = position;
       this.#setPosition(position, dndWrapElement);
     })
-    
+
+    dndWrapElement.addEventListener('click', this.#handleClickClose.bind(this))
 
     const template = `
           <div data-id="${id}" class="card mt-2" style="background-color: ${bg}">
@@ -100,11 +110,25 @@ class Note {
             <button class="btn btn-sm btn-primary card__close">Close</button>
           </div>
         `;
-        
+
     dndWrapElement.innerHTML = template;
 
     return dndWrapElement;
   };
+
+  #handleClickClose(event) {
+    const { target } = event
+
+    if (target.classList.value.includes('card__close')) {
+      const cardElement = target.closest('.card')
+
+      const { id } = cardElement.dataset
+      const index = this.#getIndexSelectedNote(id)
+      this.data.splice(index, 1)
+
+      this.render()
+    }
+  }
 
   #getIndexSelectedNote(id) {
     let index = 0;
